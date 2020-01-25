@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"gopkg.in/yaml.v2"
 	"log"
 	"os"
@@ -29,4 +30,22 @@ func LoadConfig() Config {
 	}
 
 	return cfg
+}
+
+func SaveConfig(cfg Config) {
+	workingDirectory, _ := os.Getwd()
+	f, err := os.OpenFile(workingDirectory+"/config/config.yml", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
+	//x := io.Writer(f)
+
+	encoder := yaml.NewEncoder(f)
+	err = encoder.Encode(cfg)
+	if err != nil {
+		fmt.Println("here")
+		log.Fatal(err)
+	}
+	defer encoder.Close()
 }

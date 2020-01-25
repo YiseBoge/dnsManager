@@ -1,5 +1,5 @@
 # Server configurations
 server:
-  port: "4040"
+  port: "4444"
 
 timeout: 1

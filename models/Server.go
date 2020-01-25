@@ -62,6 +62,10 @@ func (ServerModel) FindByServerNode(database *gorm.DB, serverNode ServerNode) Se
 	return model
 }
 
+func (model *ServerModel) ToServerNode() ServerNode {
+	return ServerNode{Address: model.Address, Port: model.Port}
+}
+
 func (model *ServerModel) GetParent(database *gorm.DB) ServerModel {
 	var result ServerModel
 	database.First(&model, "parent_address = ? and parent_port = ?", model.ParentAddress, model.ParentPort)

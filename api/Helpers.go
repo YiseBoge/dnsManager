@@ -21,14 +21,22 @@ func GetClient(node models.ServerModel) *rpc.Client {
 	return client
 }
 
-func CheckHeartbeat(node models.ServerModel, first bool) {
-	client := GetClient(node)
+func KeepHealthy() {
 	database := db.GetOpenDatabase()
+	servers := models.ServerModel{}.FindAll(database)
+
+	for _, server := range servers {
+		go CheckPulse(database, server, true)
+	}
+}
+
+func CheckPulse(database *gorm.DB, node models.ServerModel, first bool) {
+	client := GetClient(node)
 	var r bool
 	if first && client.Call("API.Heartbeat", "", &r) != nil {
 		t := config.LoadConfig().Timeout
 		time.Sleep(time.Duration(t) * time.Minute)
-		CheckHeartbeat(node, false)
+		CheckPulse(database, node, false)
 	}
 
 	if !r {
@@ -43,7 +51,7 @@ func GiveChildrenToParent(database *gorm.DB, node models.ServerModel) {
 	var r bool
 
 	client := GetClient(parent)
-	err := client.Call("API.RemoveChild", node, &r)
+	err := client.Call("API.RemoveChild", node.ToServerNode(), &r)
 	if err != nil {
 		log.Println("Could not contact server", parent)
 		return
@@ -51,9 +59,18 @@ func GiveChildrenToParent(database *gorm.DB, node models.ServerModel) {
 
 	for _, child := range children {
 		client := GetClient(child)
-		err := client.Call("API.SwitchParent", child, &r)
+		err := client.Call("API.SwitchParent", child.ToServerNode(), &r)
 		if err != nil {
 			log.Println("Could not contact server", parent)
 		}
+	}
+}
+
+func RemoveServerCache(server models.ServerModel, domain models.DomainName) {
+	var r bool
+	client := GetClient(server)
+	err := client.Call("API.RemoveCache", domain, &r)
+	if err != nil {
+		log.Println("Could not contact server", server)
 	}
 }
