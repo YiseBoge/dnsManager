@@ -1,5 +1,3 @@
-# Server configurations
 server:
   port: "4444"
-
-timeout: 1
+timeout: 60

@@ -3,15 +3,16 @@ package main
 import (
 	"dnsManager/api"
 	"dnsManager/config"
-	"dnsManager/models"
 	"fmt"
 	"gopkg.in/robfig/cron.v3"
 	"log"
 	"regexp"
+	"strconv"
 	"time"
 )
 
 func main() {
+	config.Start()
 	fmt.Println("Welcome to the DomaInator Manager.")
 	configuration := config.LoadConfig()
 	portRegex, _ := regexp.Compile("^([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])(?::([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]))?$")
@@ -32,18 +33,34 @@ func main() {
 		log.Printf("**Bad input, Please try again**")
 	}
 
+	var res2 string
+	for true {
+		log.Printf("Timeout value = \"%d\" press 'Enter' to continue or provide new timeout:", configuration.Timeout)
+		_, _ = fmt.Scanln(&res2)
+
+		if res2 == "" {
+			break
+		}
+
+		v, err := strconv.Atoi(res2)
+		if err == nil {
+			configuration.Timeout = v
+			break
+		}
+		log.Printf("**Bad input, Please try again**")
+	}
+
 	config.SaveConfig(configuration)
 	log.Printf("Port set to: %s", configuration.Server.Port)
 
 	c := cron.New(cron.WithSeconds())
-	timeString := fmt.Sprintf("@every %dh", configuration.Timeout)
+	timeString := fmt.Sprintf("@every %ds", configuration.Timeout)
 	_, _ = c.AddFunc(timeString, func() {
 		api.KeepHealthy()
 	})
 	c.Start()
 
 	go api.Serve()
-
 	time.Sleep(1 * time.Second)
 
 	var res string

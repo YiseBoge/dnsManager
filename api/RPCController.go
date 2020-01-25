@@ -51,7 +51,7 @@ func (a *API) RemoveFromAllCache(domain models.DomainName, result *bool) error {
 	return nil
 }
 
-func (a *API) AddServer(server models.ServerModel, result *bool) error {
+func (a *API) RegisterServer(server models.ServerModel, result *bool) error {
 	log.Println("Add Server Called______")
 
 	database := db.GetOpenDatabase()
