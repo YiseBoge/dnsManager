@@ -19,7 +19,7 @@ func main() {
 
 	var res1 string
 	for true {
-		fmt.Printf("Current port = \"%s\" press 'Enter' to continue or provide new port:", configuration.Server.Port)
+		fmt.Printf("Current port = \"%s\" press 'Enter' to continue or provide new port: ", configuration.Server.Port)
 		_, _ = fmt.Scanln(&res1)
 
 		if res1 == "" {
@@ -35,7 +35,7 @@ func main() {
 
 	var res2 string
 	for true {
-		fmt.Printf("Timeout value = \"%d\" press 'Enter' to continue or provide new timeout:", configuration.Timeout)
+		fmt.Printf("Timeout value = \"%d\" press 'Enter' to continue or provide new timeout: ", configuration.Timeout)
 		_, _ = fmt.Scanln(&res2)
 
 		if res2 == "" {

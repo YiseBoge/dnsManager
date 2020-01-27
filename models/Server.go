@@ -66,14 +66,12 @@ func (model *ServerModel) ToServerNode() ServerNode {
 	return ServerNode{Address: model.Address, Port: model.Port}
 }
 
-func (model *ServerModel) GetParent(database *gorm.DB) ServerModel {
-	var result ServerModel
-	database.First(&model, "parent_address = ? and parent_port = ?", model.ParentAddress, model.ParentPort)
-	return result
+func (model *ServerModel) GetParent() ServerNode {
+	return ServerNode{Address: model.ParentAddress, Port: model.ParentPort}
 }
 func (model *ServerModel) GetChildren(database *gorm.DB) []ServerModel {
 	var result []ServerModel
-	database.Find(&model, "parent_address = ? and parent_port = ?", model.Address, model.Port)
+	database.Find(&result, "parent_address = ? and parent_port = ?", model.Address, model.Port)
 	return result
 }
 

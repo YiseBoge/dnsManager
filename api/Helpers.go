@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func GetClient(node models.ServerModel) (*rpc.Client, error) {
+func GetClient(node models.ServerNode) (*rpc.Client, error) {
 	address := node.Address
 	port := node.Port
 
@@ -59,23 +59,23 @@ func CheckPulse(database *gorm.DB, node models.ServerModel, first bool) {
 }
 
 func GiveChildrenToParent(database *gorm.DB, node models.ServerModel) {
-	parent := node.GetParent(database)
+	parent := node.GetParent()
 	children := node.GetChildren(database)
 	var r bool
 
 	client, err := GetClient(parent)
 	if err != nil {
-		log.Printf("Could not contact parent server %s", parent.ToServerNode())
+		log.Printf("Could not contact parent server %s", parent)
 		return
 	}
 	err = client.Call("API.RemoveChild", node.ToServerNode(), &r)
 	if err != nil {
-		log.Printf("Could not call Remove Child %s", parent.ToServerNode())
+		log.Printf("Could not call Remove Child %s", parent)
 		return
 	}
 
 	for _, child := range children {
-		client, err := GetClient(child)
+		client, err := GetClient(child.ToServerNode())
 		if err != nil {
 			log.Printf("Could not contact child server %s", child.ToServerNode())
 			continue
@@ -89,7 +89,7 @@ func GiveChildrenToParent(database *gorm.DB, node models.ServerModel) {
 
 func RemoveServerCache(server models.ServerModel, domain models.DomainName) {
 	var r bool
-	client, err := GetClient(server)
+	client, err := GetClient(server.ToServerNode())
 	if err != nil {
 		log.Printf("Could not contact server %s", server.ToServerNode())
 		return

@@ -58,6 +58,8 @@ func (a *API) RegisterServer(server models.ServerModel, result *bool) error {
 	server.Save(database)
 	*result = true
 	log.Println("New Server", server.ToServerNode())
+	node := server.GetParent()
+	log.Println("It's parent", node)
 
 	log.Println("______Register Server Returning")
 	return nil
