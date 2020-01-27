@@ -1,7 +1,6 @@
 package api
 
 import (
-	"dnsManager/config"
 	"dnsManager/db"
 	"dnsManager/models"
 	"github.com/jinzhu/gorm"
@@ -15,7 +14,7 @@ func GetClient(node models.ServerNode) (*rpc.Client, error) {
 	address := node.Address
 	port := node.Port
 
-	timeout := 5 * time.Second
+	timeout := 3 * time.Second
 	_, err := net.DialTimeout("tcp", address+":"+port, timeout)
 	if err != nil {
 		//log.Println("Site unreachable, error: ", err)
@@ -45,8 +44,7 @@ func CheckPulse(database *gorm.DB, node models.ServerModel, first bool) {
 	if err != nil {
 		if first {
 			log.Println("Suspecting node", node.ToServerNode())
-			t := config.LoadConfig().Timeout / 2
-			time.Sleep(time.Duration(t) * time.Second)
+			time.Sleep(3 * time.Second)
 			CheckPulse(database, node, false)
 		} else {
 			log.Println("Removing node", node.ToServerNode())
@@ -80,7 +78,8 @@ func GiveChildrenToParent(database *gorm.DB, node models.ServerModel) {
 			log.Printf("Could not contact child server %s", child.ToServerNode())
 			continue
 		}
-		err = client.Call("API.SwitchParent", child.ToServerNode(), &r)
+		log.Println("New Parent is", parent)
+		err = client.Call("API.SwitchParent", parent, &r)
 		if err != nil {
 			log.Printf("Could not call Switch Parent for child %s", child.ToServerNode())
 		}

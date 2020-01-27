@@ -70,9 +70,9 @@ func (model *ServerModel) GetParent() ServerNode {
 	return ServerNode{Address: model.ParentAddress, Port: model.ParentPort}
 }
 func (model *ServerModel) GetChildren(database *gorm.DB) []ServerModel {
-	var result []ServerModel
-	database.Find(&result, "parent_address = ? and parent_port = ?", model.Address, model.Port)
-	return result
+	var models []ServerModel
+	database.Where("parent_address = ? AND parent_port = ?", model.Address, model.Port).Find(&models)
+	return models
 }
 
 func (model *ServerModel) Delete(database *gorm.DB) {

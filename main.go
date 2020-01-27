@@ -30,7 +30,7 @@ func main() {
 			configuration.Server.Port = res1
 			break
 		}
-		fmt.Printf("**Bad input, Please try again**")
+		fmt.Println("**Bad input, Please try again**")
 	}
 
 	var res2 string
@@ -47,7 +47,7 @@ func main() {
 			configuration.Timeout = v
 			break
 		}
-		fmt.Printf("**Bad input, Please try again**")
+		fmt.Println("**Bad input, Please try again**")
 	}
 
 	config.SaveConfig(configuration)
