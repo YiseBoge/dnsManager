@@ -52,12 +52,13 @@ func (a *API) RemoveFromAllCache(domain models.DomainName, result *bool) error {
 }
 
 func (a *API) RegisterServer(server models.ServerModel, result *bool) error {
-	log.Println("Add Server Called______")
+	log.Println("Register Server Called______")
 
 	database := db.GetOpenDatabase()
 	server.Save(database)
 	*result = true
+	log.Println("New Server", server.ToServerNode())
 
-	log.Println("______Add Server Returning")
+	log.Println("______Register Server Returning")
 	return nil
 }

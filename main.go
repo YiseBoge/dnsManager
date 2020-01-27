@@ -65,12 +65,12 @@ func main() {
 
 	var res string
 	for true {
-		fmt.Printf("Type 'exit' or 'stop' to stop serving.")
+		fmt.Println("Type 'exit' or 'stop' to stop serving.")
 		_, _ = fmt.Scanln(&res)
 
 		if res == "exit" || res == "stop" {
 			break
 		}
-		fmt.Printf("**Bad input, Please try again**")
+		fmt.Println("**Bad input, Please try again**")
 	}
 }
