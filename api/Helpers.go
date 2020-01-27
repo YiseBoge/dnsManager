@@ -6,15 +6,23 @@ import (
 	"dnsManager/models"
 	"github.com/jinzhu/gorm"
 	"log"
+	"net"
 	"net/rpc"
 	"time"
 )
 
 func GetClient(node models.ServerModel) (*rpc.Client, error) {
-	parentAddress := node.Address
-	parentPort := node.Port
+	address := node.Address
+	port := node.Port
 
-	client, err := rpc.DialHTTP("tcp", parentAddress+":"+parentPort)
+	timeout := 5 * time.Second
+	_, err := net.DialTimeout("tcp", address+":"+port, timeout)
+	if err != nil {
+		//log.Println("Site unreachable, error: ", err)
+		return nil, err
+	}
+
+	client, err := rpc.DialHTTP("tcp", address+":"+port)
 	if err != nil {
 		return nil, err
 	}
@@ -32,10 +40,9 @@ func KeepHealthy() {
 }
 
 func CheckPulse(database *gorm.DB, node models.ServerModel, first bool) {
-	client, err := GetClient(node)
-	var r bool
-
-	if err != nil || client.Call("API.Heartbeat", "", &r) != nil {
+	timeout := 5 * time.Second
+	_, err := net.DialTimeout("tcp", node.Address+":"+node.Port, timeout)
+	if err != nil {
 		if first {
 			log.Println("Suspecting node", node.ToServerNode())
 			t := config.LoadConfig().Timeout / 2

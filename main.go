@@ -19,7 +19,7 @@ func main() {
 
 	var res1 string
 	for true {
-		log.Printf("Current port = \"%s\" press 'Enter' to continue or provide new port:", configuration.Server.Port)
+		fmt.Printf("Current port = \"%s\" press 'Enter' to continue or provide new port:", configuration.Server.Port)
 		_, _ = fmt.Scanln(&res1)
 
 		if res1 == "" {
@@ -30,12 +30,12 @@ func main() {
 			configuration.Server.Port = res1
 			break
 		}
-		log.Printf("**Bad input, Please try again**")
+		fmt.Printf("**Bad input, Please try again**")
 	}
 
 	var res2 string
 	for true {
-		log.Printf("Timeout value = \"%d\" press 'Enter' to continue or provide new timeout:", configuration.Timeout)
+		fmt.Printf("Timeout value = \"%d\" press 'Enter' to continue or provide new timeout:", configuration.Timeout)
 		_, _ = fmt.Scanln(&res2)
 
 		if res2 == "" {
@@ -47,7 +47,7 @@ func main() {
 			configuration.Timeout = v
 			break
 		}
-		log.Printf("**Bad input, Please try again**")
+		fmt.Printf("**Bad input, Please try again**")
 	}
 
 	config.SaveConfig(configuration)
@@ -65,12 +65,12 @@ func main() {
 
 	var res string
 	for true {
-		log.Printf("Type 'exit' or 'stop' to stop serving.")
+		fmt.Printf("Type 'exit' or 'stop' to stop serving.")
 		_, _ = fmt.Scanln(&res)
 
 		if res == "exit" || res == "stop" {
 			break
 		}
-		log.Printf("**Bad input, Please try again**")
+		fmt.Printf("**Bad input, Please try again**")
 	}
 }
